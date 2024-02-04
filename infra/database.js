@@ -7,17 +7,20 @@ async function query(queryObject) {
     user: process.env.POSTGRES_USER,
     database: process.env.POSTGRES_DB,
     password: process.env.POSTGRES_PASSWORD
-  })
+  })  
   
-  await client.connect()
-
   try {
+    await client.connect()
     const result = await client.query(queryObject)
     return result.rows
   } catch (error) {
     console.error(error)
   } finally {
-    await client.end()
+    try {
+      await client.end()
+    } catch (error) {
+      console.error('Não há conexão aberta com o banco')
+    }
   }
 }
 
